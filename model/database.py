@@ -3,7 +3,7 @@ import re
 import mysql.connector
 from mysql.connector import errorcode
 from model.const import DB
-from model.item import EMP, DEPT, EMP_ALL
+from model.item import EMP, DEPT
 
 
 #データベースに接続
