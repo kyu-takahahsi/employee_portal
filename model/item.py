@@ -26,11 +26,3 @@ class EMP_ALL(object):
         self.join = join
         self.retire = retire
         self.image = image
-
-
-class EMP_COUNT(object):
-    def __init__(self, id="", name="", dept=""):
-        self.id = id
-        self.name = name
-        self.dept = dept
-

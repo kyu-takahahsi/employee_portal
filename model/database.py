@@ -3,7 +3,7 @@ import re
 import mysql.connector
 from mysql.connector import errorcode
 from model.const import DB
-from model.item import EMP, DEPT, EMP_ALL, EMP_COUNT
+from model.item import EMP, DEPT, EMP_ALL
 
 
 #データベースに接続
@@ -194,7 +194,7 @@ def exeSearchEmpQuery(cursor, query):
     #SQLで取得した値を格納(HTMLに送るためのリスト)
     emp_info = []
     for (id, name, dept) in cursor:
-        item = EMP_COUNT(id, name, dept)
+        item = EMP(id, name, dept)
         emp_info.append(item)
         emp_count += 1
 
