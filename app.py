@@ -483,11 +483,19 @@ def tableData():
     return emp_info
 
 
+def comformDeleteEmpInfo(emp_info, delete_info):
+    exist_info = ""
+    for i in emp_info:
+        if i["image_id"] == delete_info:
+            exist_info = "in"
+    return exist_info
+
+
 #削除のクエリ
-def exeDeleteEmpQuery(cursor, cnx, info_delete, img_delete, delete_info, emp_name):
+def exeDeleteEmpQuery(cursor, cnx, info_delete, img_delete, delete_info, emp_name, exist_info):
     message = ""
 
-    if "delete_info" in request.form.keys() and delete_info in emp_info:
+    if "delete_info" in request.form.keys() and exist_info != "":
         #削除ボタンが押された
         cursor.execute(info_delete)
         cursor.execute(img_delete)
@@ -495,8 +503,9 @@ def exeDeleteEmpQuery(cursor, cnx, info_delete, img_delete, delete_info, emp_nam
         message = "＊成功：" + emp_name + "をデータベースから削除しました"
     else:
         message = "＊失敗：" + emp_name + "という名前はデータベース上に情報がありません"
+    emp_info = tableDataStorage()
 
-    return message
+    return message, emp_info
 
 
 #値を集約
@@ -524,11 +533,14 @@ def deleteEmp():
     #クエリの取得
     info_delete, img_delete = setDeleteEmpQuery(delete_info)
 
-    #クエリ実行するかの判定、結果
-    message = exeDeleteEmpQuery(cursor, cnx, info_delete, img_delete, delete_info, emp_name)
-
     #社員情報のリスト
     emp_info = tableDataStorage()
+
+    #情報が存在するかの確認
+    exist_info = comformDeleteEmpInfo(emp_info, delete_info)
+
+    #クエリ実行するかの判定、結果
+    message, emp_info = exeDeleteEmpQuery(cursor, cnx, info_delete, img_delete, delete_info, emp_name, exist_info)
 
     #HTMLに送る全ての値をparamsに格納
     params = correctDeleteEmpValue(emp_info, message)
