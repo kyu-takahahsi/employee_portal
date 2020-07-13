@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <title>サンプル</title>
+   <style type="text/css">
+       table, td, th {
+           border: solid black 1px;
+       }
+       table {
+           width: 700px;
+       }
+       p {
+           font-size: 10px
+       }
+       hr {
+            border-width: 1px 0px 0px 0px;
+            border-style: dashed;
+            border-color: black;
+            height: 10px;
+        }
+        img{
+            width: 100px;
+            height: 100px;
+        }
+   </style>
+</head>
+<body>
+    {% if result %}
+    <h3>{{judge}}</h3>
+    <form method="POST" action="/emp">
+        <button type="submit" name="go_home" value="go_home">TOPページ</button>
+    </form>
+    {% else %}
+        {% if add %}
+        <h1>社員データベースに情報を新規追加します</h1>
+        <h3>{{judge}}</h3>
+        <form method="POST" enctype="multipart/form-data" action="/emp/add">
+            <label>名前　　　：<input type="text" name="emp_name"></label>
+            <p>＊名前と苗字の間に半角で空欄を入力</p>
+            <hr>
+            <label>年齢　　　：<input type="text" name="emp_age"></label>
+            <p>＊年齢は半角数字で入力</p>
+            <hr>
+            <label>性別　　　：<input type="radio" name="emp_sex" value="男" {{'checked' if button == "男"}}>男性
+                            <input type="radio" name="emp_sex" value="女" {{'checked' if button == "女"}}>女性</label>
+            <hr>
+                            <label>郵便番号　：<input type="text" name="emp_postal"></label>
+            <p>＊半角数字、半角ハイフンで入力(例：123-4567)</p>
+            <hr>
+            <label>都道府県　：<select name="emp_pref">
+                                <option value="" selected>選択してください</option>
+                                <option value="北海道">北海道</option>
+                                <option value="青森県">青森県</option>
+                                <option value="岩手県">岩手県</option>
+                                <option value="宮城県">宮城県</option>
+                                <option value="秋田県">秋田県</option>
+                                <option value="山形県">山形県</option>
+                                <option value="福島県">福島県</option>
+                                <option value="茨城県">茨城県</option>
+                                <option value="栃木県">栃木県</option>
+                                <option value="群馬県">群馬県</option>
+                                <option value="埼玉県">埼玉県</option>
+                                <option value="千葉県">千葉県</option>
+                                <option value="東京都">東京都</option>
+                                <option value="神奈川県">神奈川県</option>
+                                <option value="新潟県">新潟県</option>
+                                <option value="富山県">富山県</option>
+                                <option value="石川県">石川県</option>
+                                <option value="福井県">福井県</option>
+                                <option value="山梨県">山梨県</option>
+                                <option value="長野県">長野県</option>
+                                <option value="岐阜県">岐阜県</option>
+                                <option value="静岡県">静岡県</option>
+                                <option value="愛知県">愛知県</option>
+                                <option value="三重県">三重県</option>
+                                <option value="滋賀県">滋賀県</option>
+                                <option value="京都府">京都府</option>
+                                <option value="大阪府">大阪府</option>
+                                <option value="兵庫県">兵庫県</option>
+                                <option value="奈良県">奈良県</option>
+                                <option value="和歌山県">和歌山県</option>
+                                <option value="鳥取県">鳥取県</option>
+                                <option value="島根県">島根県</option>
+                                <option value="岡山県">岡山県</option>
+                                <option value="広島県">広島県</option>
+                                <option value="山口県">山口県</option>
+                                <option value="徳島県">徳島県</option>
+                                <option value="香川県">香川県</option>
+                                <option value="愛媛県">愛媛県</option>
+                                <option value="高知県">高知県</option>
+                                <option value="福岡県">福岡県</option>
+                                <option value="佐賀県">佐賀県</option>
+                                <option value="長崎県">長崎県</option>
+                                <option value="熊本県">熊本県</option>
+                                <option value="大分県">大分県</option>
+                                <option value="宮崎県">宮崎県</option>
+                                <option value="鹿児島県">鹿児島県</option>
+                                <option value="沖縄県">沖縄県</option>
+                            </select>
+        　<hr>
+            <label>住所　　　：<input type="text" name="emp_address"></label>
+            <p>＊市町村以降を入力</p>
+            <hr>
+            <label>写真　　　：<input type="file" id="emp_image" name="emp_image"></label>
+            <p>＊画像ファイルはJPEGもしくはPNGのみ</p>
+            <hr>
+            <label>所属　　　：<select name="emp_dept">
+                                <option value="" selected>選択してください</option>
+                                {% for item in dept_info %}
+                                <option value={{item.id}} {% if nothing_check %} checked {% endif %}>{{item.name}}</option>
+                                {% endfor %}
+                            </select>
+            <hr>
+            <label>入社日　　：<input type="text" name="join_date"></label>
+            <hr>
+            <label>退社日　　：<input type="text" name="retire_date"></label>
+            <hr>
+            <p>＊全ての項目が入力選択必須</p>
+            <button type="submit" name="setting" value="push!!">設定</button>
+        </form>
+        {% else %}
+        <h1>社員データベースの情報を変更します</h1>
+            {% for item in edit_info %}
+            <form method="POST" enctype="multipart/form-data" action="/emp/edit">
+                <input type="hidden" name="change_info" value="{{ item.id }}">
+                <input type="hidden" name="image_id" value="{{ item.image_id }}">
+                <label>名前　　　：<input type="text" name="emp_name" value="{{item.name}}"></label>
+                <p>＊名前と苗字の間に半角で空欄を入力</p>
+                <hr>
+                <label>年齢　　　：<input type="text" name="emp_age" value="{{item.age}}"></label>
+                <p>＊年齢は半角数字で入力</p>
+                <hr>
+                <label>性別　　　：<input type="radio" name="emp_sex" value='男' {{'checked' if item.sex == '男'}}>男性
+                                <input type="radio" name="emp_sex" value='女' {{'checked' if  item.sex == '女'}}>女性</label>
+                <hr>
+                                <label>郵便番号　：<input type="text" name="emp_postal" value="{{item.post}}"></label>
+                <p>＊半角数字、半角ハイフンで入力(例：123-4567)</p>
+                <hr>
+                <label>都道府県　：<select name="emp_pref">
+                                    <option value="{{item.pref}}" selected> {{item.pref}}</option>
+                                    <option value="北海道">北海道</option>
+                                    <option value="青森県">青森県</option>
+                                    <option value="岩手県">岩手県</option>
+                                    <option value="宮城県">宮城県</option>
+                                    <option value="秋田県">秋田県</option>
+                                    <option value="山形県">山形県</option>
+                                    <option value="福島県">福島県</option>
+                                    <option value="茨城県">茨城県</option>
+                                    <option value="栃木県">栃木県</option>
+                                    <option value="群馬県">群馬県</option>
+                                    <option value="埼玉県">埼玉県</option>
+                                    <option value="千葉県">千葉県</option>
+                                    <option value="東京都">東京都</option>
+                                    <option value="神奈川県">神奈川県</option>
+                                    <option value="新潟県">新潟県</option>
+                                    <option value="富山県">富山県</option>
+                                    <option value="石川県">石川県</option>
+                                    <option value="福井県">福井県</option>
+                                    <option value="山梨県">山梨県</option>
+                                    <option value="長野県">長野県</option>
+                                    <option value="岐阜県">岐阜県</option>
+                                    <option value="静岡県">静岡県</option>
+                                    <option value="愛知県">愛知県</option>
+                                    <option value="三重県">三重県</option>
+                                    <option value="滋賀県">滋賀県</option>
+                                    <option value="京都府">京都府</option>
+                                    <option value="大阪府">大阪府</option>
+                                    <option value="兵庫県">兵庫県</option>
+                                    <option value="奈良県">奈良県</option>
+                                    <option value="和歌山県">和歌山県</option>
+                                    <option value="鳥取県">鳥取県</option>
+                                    <option value="島根県">島根県</option>
+                                    <option value="岡山県">岡山県</option>
+                                    <option value="広島県">広島県</option>
+                                    <option value="山口県">山口県</option>
+                                    <option value="徳島県">徳島県</option>
+                                    <option value="香川県">香川県</option>
+                                    <option value="愛媛県">愛媛県</option>
+                                    <option value="高知県">高知県</option>
+                                    <option value="福岡県">福岡県</option>
+                                    <option value="佐賀県">佐賀県</option>
+                                    <option value="長崎県">長崎県</option>
+                                    <option value="熊本県">熊本県</option>
+                                    <option value="大分県">大分県</option>
+                                    <option value="宮崎県">宮崎県</option>
+                                    <option value="鹿児島県">鹿児島県</option>
+                                    <option value="沖縄県">沖縄県</option>
+                                </select>
+                <hr>
+                <label>住所　　　：<input type="text" name="emp_address"  value="{{item.address}}"></label>
+                <p>＊市町村以降を入力</p>
+                <hr>
+                <label>写真　　　：<img src="{{ item.image }}">
+                                <input type="file" id="emp_image" name="emp_image"></label>
+                <p>＊画像ファイルはJPEGもしくはPNGのみ</p>
+                <hr>
+                <label>所属　　　：<select name="emp_dept">
+                                    {% for item in dept_info %}
+                                        <option {% if item.id == dept_select %} selected {% endif %} value="{{item.id}}">{{item.name}}</option>
+                                    {% endfor %}
+                                </select>
+                <hr>
+                <label>入社日　　：<input type="text" name="join_date" value="{{item.join}}"></label>
+                <hr>
+                <label>退社日　　：<input type="text" name="retire_date" value="{{item.retire}}"></label>
+                <hr>
+                <p>＊全ての項目が入力選択必須</p>
+                <button type="submit" name="setting" value="push!!">設定</button>
+            </form>
+            {% endfor %}
+        {% endif %}
+        <form method="POST" action="/">
+            <button type="submit" name="go_home" value="push!!">キャンセル</button>
+        </form>
+    {% endif %}
+</body>
+</html>
+

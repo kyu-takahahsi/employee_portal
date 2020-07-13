@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <title>サンプル</title>
+   <style type="text/css">
+       table, td, th {
+           border: solid black 1px;
+           text-align: center;
+       }
+       table {
+           width: 400px;
+       }
+       p {
+           font-size: 10px
+       }
+       hr {
+            border-width: 1px 0px 0px 0px;
+            border-style: dashed;
+            border-color: black;
+            height: 10px;
+        }
+        img{
+            width: 100px;
+            height: 100px;
+        }
+   </style>
+</head>
+<body>
+    <h1>条件を指定して社員情報を検索します</h1>
+    <form method="POST" action="/emp/search">
+        <label>所属部署　　　　：<select name="search_dept">
+            <option value="">選択してください</option>
+            {% for item in dept_info %}
+            <option {% if item.id==search_dept %} selected {% endif %} value="{{item.id}}">{{item.name}}</option>
+            {% endfor %}
+            </select>
+        </label>
+        <hr>
+        <label>社員ID　　　　　： <input type="text" name="search_emp_id" value="{{search_emp_id}}"></label>
+        <hr>
+        <label>名前に含む文字　： <input type="text" name="search_name" value="{{search_name}}"></label>
+        <hr>
+        <button type="submit" name="search_emp" value="push!!" >検索</button>
+    </form>
+    <h4>{{change_message}}</h4>
+    {% if emp_count == 0 %}
+    <h3>検索結果 ：一致するデータはありません</h3>
+    {% else %}
+    <h3>社員数 ：{{emp_count}}件</h3>
+    {% endif %}
+    <table>
+        <tr>
+            <th>社員ID</th>
+            <th>名前</th>
+            <th>部署</th>
+            <th>更新</th>
+        </tr>
+       {% for item in emp_info %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.dept }}</td>
+            <td>
+                <form method="POST" action="/emp/edit">
+                    <input type="hidden" name="emp_name" value="{{ item.name }}">
+                    <button type="submit" name="change_info" value="{{item.id}}" >編集</button>
+                </form>
+                <form method="POST" action="/emp/delete">
+                    <button type="submit" name="delete_info" value="{{item.id}}" >削除</button>
+                </form>
+            </td>
+        </tr>
+       {% endfor %}
+    </table>
+    {% if emp_count == 0 %}
+    <form method="POST" action="/emp/add">
+        <button type="submit" name="add_emp" value="add_emp">新規追加</button>
+    </form>
+    {% endif %}
+    <form method="POST" action="/emp/search">
+        <button type="submit" name="search_emp" value="search_emp">条件リセット</button>
+    </form>
+    <form method="POST" action="/">
+        <button type="submit" name="go_home" value="push!!">キャンセル</button>
+    </form>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+   <meta charset="UTF-8">
+   <title>サンプル</title>
+   <style type="text/css">
+       table, td, th {
+           border: solid black 1px;
+           text-align: center;
+       }
+       table {
+           width: 350px;
+       }
+       p {
+           font-size: 10px
+       }
+       hr {
+            border-width: 1px 0px 0px 0px;
+            border-style: dashed;
+            border-color: black;
+            height: 10px;
+        }
+        img{
+            width: 100px;
+            height: 100px;
+        }
+   </style>
+</head>
+<body>
+    <h3>部署一覧</h3>
+    <h4>{{message}}</h4>
+    <table>
+        <tr>
+            <th>部署ID</th>
+            <th>部署名</th>
+            <th>更新</th>
+        </tr>
+       {% for item in dept_info %}
+        <tr>
+            <td>{{ item.id }}</td>
+            <td>{{ item.name }}</td>
+            <td>
+                <form method="POST" action="/dept/edit">
+                    <input type="hidden" name="dept_name" value="{{ item.name }}">
+                    <button type="submit" name="change_info" value="{{item.id}}" >編集</button>
+                </form>
+                <form method="POST" action="/dept/delete">
+                    <input type="hidden" name="dept_name" value="{{ item.name }}">
+                    <button type="submit" name="delete_info" value="{{item.id}}" >削除</button>
+                </form>
+            </td>
+        </tr>
+       {% endfor %}
+    </table>
+    <form method="POST" action="/dept/add">
+        <input type="hidden" name="add" value="add">
+        <button type="submit" name="add_dept" value="add_dept">新規追加</button>
+    </form><br>
+    <hr>
+    <form method="POST" action="/">
+        <button type="submit" name="go_emp_page" value="push!!">社員一覧</button>
+    </form>
+</body>
+</html>
