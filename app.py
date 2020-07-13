@@ -280,13 +280,13 @@ def exeEditQuery(cursor, cnx,  emp_name, emp_age, emp_sex, emp_postal, emp_pref,
         elif not re.search(r"[ ]", emp_name):
             judge = "＊失敗：名前と苗字の間に半角で空欄を入力してください"
             result = "false"
-        #条件通りなので新規追加(画像の変更なし)
+        #条件通りなので情報変更(画像の変更なし)
         elif emp_image == "":
             cursor.execute(info_update)
             cnx.commit()
             judge = "＊成功：データベースの変更が行われました"
             result = "success"
-        #条件通りなので新規追加(画像の変更あり)
+        #条件通りなので情報変更(画像の変更あり)
         else:
             cursor.execute(info_update)
             cursor.execute(img_update)
@@ -468,16 +468,33 @@ def setDeleteEmpQuery(delete_info):
     return info_delete, img_delete
 
 
+#従業員データを取得し、配列に代入する
+def tableData():
+    cursor, cnx = connectDatabase()
+
+    query = "SELECT emp_id, emp_name, dept_name, image_id FROM emp_info_table as eit JOIN dept_table as dt ON eit.dept_id = dt.dept_id ORDER BY emp_id;"
+    cursor.execute(query)
+
+    emp_info = []
+    for (id, name, dept, image_id) in cursor:
+        item = {"id" : id, "name" : name, "dept" : dept, "image_id": image_id}
+        emp_info.append(item)
+
+    return emp_info
+
+
 #削除のクエリ
 def exeDeleteEmpQuery(cursor, cnx, info_delete, img_delete, delete_info, emp_name):
     message = ""
 
-    if "delete_info" in request.form.keys() and delete_info != "":
+    if "delete_info" in request.form.keys() and delete_info in emp_info:
         #削除ボタンが押された
         cursor.execute(info_delete)
         cursor.execute(img_delete)
         cnx.commit()
         message = "＊成功：" + emp_name + "をデータベースから削除しました"
+    else:
+        message = "＊失敗：" + emp_name + "という名前はデータベース上に情報がありません"
 
     return message
 
@@ -501,7 +518,7 @@ def deleteEmp():
     #データベースに接続
     cursor, cnx = connectDatabase()
 
-    #部署名セレクターのためのリスト
+    #部署名のためのリスト
     dept_info = deptInfoData(cursor)
 
     #クエリの取得
@@ -702,15 +719,27 @@ def setDeleteDeptQuery(delete_info):
     return dept_delete
 
 
+#情報が存在するかの確認
+def comformDeleteInfo(dept_info, delete_info):
+    exist_info = ""
+    for i in dept_info:
+        if i["id"] == int(delete_info):
+            exist_info = "in"
+    return exist_info
+
+
 #削除のクエリ
-def exeDeleteDeptQuery(cursor, cnx, delete_info, dept_name, dept_delete):
+def exeDeleteDeptQuery(cursor, cnx, delete_info, dept_name, dept_delete, exist_info, dept_info):
     message = ""
-    if "delete_info" in request.form.keys() and delete_info != "":
+    if "delete_info" in request.form.keys() and exist_info != "":
         cursor.execute(dept_delete)
         cnx.commit()
         message = "＊成功：" + dept_name + "をデータベースから削除しました"
+    else:
+        message = "＊失敗：" + dept_name + "という情報はデータベース上に情報がありません"
+    dept_info = deptInfoData(cursor)
 
-    return message
+    return message, dept_info
 
 
 #値を集約
@@ -738,8 +767,11 @@ def deleteDept():
     #部署を更新するためのクエリ
     dept_delete = setDeleteDeptQuery(delete_info)
 
+    #情報が存在するかの確認
+    exist_info = comformDeleteInfo(dept_info, delete_info)
+
     #条件による判定
-    message = exeDeleteDeptQuery(cursor, cnx, delete_info, dept_name, dept_delete)
+    message, dept_info = exeDeleteDeptQuery(cursor, cnx, delete_info, dept_name, dept_delete, exist_info, dept_info)
 
     #値を集約
     params = correctDeleteDeptValue(dept_info, message)
