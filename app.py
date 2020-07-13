@@ -24,7 +24,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 #MVC
 import model.database as db
-from model.item import EMP, DEPT, EMP_ALL
+from model.item import EMP, DEPT
 
 #ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 #ホーム画面
