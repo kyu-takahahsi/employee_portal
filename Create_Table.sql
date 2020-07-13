@@ -33,9 +33,4 @@ CREATE TABLE dept_table(
     PRIMARY KEY (dept_id)
 );
 
-SELECT info.emp_id as emp_id, emp_name, age, sex, info.image_id, post_code, pref, address, dt.dept_id, dt.dept_name, join_date, retire_date, emp_image 
-FROM emp_info_table as info 
-JOIN emp_img_table as img 
-ON info.image_id = img.image_id
-JOIN dept_table as dt
-ON info.dept_id = dt.dept_id;
+SELECT info.emp_id as emp_id, emp_name, age, sex, info.image_id, post_code, pref, address, dt.dept_id, dt.dept_name, join_date, retire_date, emp_image FROM emp_info_table as info JOIN emp_img_table as img ON info.image_id = img.image_id JOIN dept_table as dt ON info.dept_id = dt.dept_id;
