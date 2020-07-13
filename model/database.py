@@ -106,7 +106,7 @@ def getEditEmpinfo(cursor, change_info):
 
     #社員ID、名前、年齢、性別、都道府県、住所、部署ID、入社日、退社日、画像
     for (id, name, age, sex, image_id, post, pref, address, dept, join, retire, image) in cursor:
-        item = EMP_ALL(id, name, age, sex, image_id, post, pref, address, dept, join, retire, image)
+        item = EMP(id, name, age, sex, image_id, post, pref, address, dept, join, retire, image)
         if str(item["id"]) == change_info:
             edit_info.append(item)
             dept_select = item["dept"]
