@@ -219,14 +219,12 @@ def exeAddDeptQuery(cursor, cnx, dept_name, dept_add):
     if "setting" in request.form.keys():
         #値が入力されておらず空欄のまま
         if dept_name == "" or not "部" in dept_name:
-            judge = "＊失敗：部署名を入力してください"
-            result = "false"
+            judge, result = "＊失敗：部署名を入力してください", "false"
         #条件通りなので新規追加
         else:
             cursor.execute(dept_add)
             cnx.commit()
-            judge = "＊成功：データベースの追加が行われました"
-            result = "success"
+            judge, result = "＊成功：データベースの追加が行われました", "success"
     return judge, result
 
 
@@ -249,13 +247,11 @@ def exeEditDeptQuery(cursor, cnx, change_info, dept_name, dept_update):
     judge = ""
     if "setting" in request.form.keys() and change_info != "":
         if dept_name == "":
-            judge = "＊失敗：データベースの変更ができませんでした"
-            result = "fales"
+            judge, result = "＊失敗：データベースの変更ができませんでした", "fales"
         else:
             cursor.execute(dept_update)
             cnx.commit()
-            judge = "＊成功：データベースの変更が行われました"
-            result = "success"
+            judge, result = "＊成功：データベースの変更が行われました", "success"
     return judge, result
 
 
