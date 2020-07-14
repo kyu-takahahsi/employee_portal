@@ -1,6 +1,6 @@
 --社員情報テーブル：社員ID、名前、年齢、性別、写真ID、郵便番号、都道府県、住所、部署ID、入社日、退社日、更新日
 CREATE TABLE emp_info_table(
-    --emp_id INT AUTO_INCREMENT,
+    emp_id INT AUTO_INCREMENT,
     emp_name VARCHAR(100),
     age INT(100),
     sex VARCHAR(100),
@@ -11,7 +11,7 @@ CREATE TABLE emp_info_table(
     dept_id INT(100),
     join_date VARCHAR(100),
     retire_date VARCHAR(100),
-    --update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (emp_id)
 );
 
@@ -20,16 +20,16 @@ CREATE TABLE emp_info_table(
 CREATE TABLE emp_img_table(
     image_id VARCHAR(100),
     emp_image VARCHAR(100),
-    --update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 
 --部署情報テーブル：部署ID、部署名、作成日、更新日
 CREATE TABLE dept_table(
-    --dept_id INT AUTO_INCREMENT,
+    dept_id INT AUTO_INCREMENT,
     dept_name VARCHAR(100),
-    --edit_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    --update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    edit_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+    update_date DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     PRIMARY KEY (dept_id)
 );
 
