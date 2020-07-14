@@ -108,7 +108,7 @@ def getChangeEmpInfo():
     emp_pref = request.form.get("emp_pref", "")
     emp_address = request.form.get("emp_address", "")
     emp_dept = request.form.get("emp_dept", "")
-    join_date = request.form.get("retire_date", "")
+    join_date = request.form.get("join_date", "")
     retire_date = request.form.get("retire_date", "")
     emp_image = request.files.get("emp_image", "")
     image_id = request.form.get("image_id", "")
@@ -141,6 +141,7 @@ def editEmp():
     edit_info, dept_select, pref_select = db.getEditEmpinfo(cursor, change_info)
     #クエリの取得
     info_update, img_update = db.setEditEmpQuery(change_info, emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, add_emp_image)
+    print(info_update)
     #クエリ実行するかの判定、結果
     judge, result = db.exeEditQuery(cursor, cnx,  emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, add_emp_image, emp_image, info_update, img_update)
     #HTMLに送る全ての値をparamsに格納
