@@ -164,7 +164,7 @@ def exeSearchEmpQuery(cursor, query):
     #SQLで取得した値を格納(HTMLに送るためのリスト)
     emp_info = []
     for (id, name, dept) in cursor:
-        item = EMP(id, name, dept)
+        item = {"id" : id, "name" : name, "dept" : dept}
         emp_info.append(item)
         emp_count += 1
     return emp_info, emp_count
