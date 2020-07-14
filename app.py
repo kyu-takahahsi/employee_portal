@@ -16,13 +16,14 @@ import random
 import string
 #MVC
 import model.database as db
-from model.item import EMP, DEPT
+#from model.item import EMP, DEPT
 #21章
 #画像のためのパスや定義
 UPLOAD_FOLDER = './static/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
+
 #ホーム画面
 @app.route("/", methods=['GET', 'POST'])
 def employeeList():
@@ -52,6 +53,7 @@ def getEmpInfo():
         image_id += (random.choice(string.ascii_letters))
     return add, emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, emp_image
 
+
 #画像の有無
 def imageSetVariable(emp_image):
     add_emp_image = ""
@@ -64,6 +66,7 @@ def imageSetVariable(emp_image):
             emp_image = ""
     return add_emp_image, emp_image
 
+
 #値を集約
 def correctAddEmpValue(add, judge, result, dept_info):
     params = {
@@ -73,6 +76,7 @@ def correctAddEmpValue(add, judge, result, dept_info):
         "dept_info" : dept_info
     }
     return params
+
 
 #新規追加URL(部品を集めて実行する)
 @app.route("/emp/add", methods=["POST"])
@@ -114,6 +118,7 @@ def getChangeEmpInfo():
     image_id = request.form.get("image_id", "")
     return change_info, emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, emp_image
 
+
 #値を集約
 def correctEditValue(pref_select, dept_select, dept_info, edit_info, judge, result):
     params = {
@@ -125,6 +130,7 @@ def correctEditValue(pref_select, dept_select, dept_info, edit_info, judge, resu
         "judge" : judge
     }
     return params
+
 
 #編集のURL(部品を集めて実行する)
 @app.route("/emp/edit", methods=["POST"])
@@ -158,6 +164,7 @@ def getSearchEmpInfo():
     search_name = request.form.get("search_name", "")
     return search_dept, search_emp_id, search_name
 
+
 #値を集約
 def correctSearchEmpValue(search_name, search_emp_id, search_dept, dept_info, emp_info, emp_count):
     params = {
@@ -169,6 +176,7 @@ def correctSearchEmpValue(search_name, search_emp_id, search_dept, dept_info, em
         "emp_info" : emp_info
     }
     return params
+
 
 #検索のURL(部品を集めて実行する)
 @app.route("/emp/search", methods=["POST"])
@@ -207,6 +215,7 @@ def getDeleteEmpInfo():
     emp_name = request.form.get("emp_name", "")
     return delete_info, emp_name
 
+
 #値を集約
 def correctDeleteEmpValue(emp_info, message):
     params = {
@@ -214,6 +223,7 @@ def correctDeleteEmpValue(emp_info, message):
         "message" : message
     }
     return params
+
 
 #削除のURL(部品を集めて実行する)
 @app.route("/emp/delete", methods=["POST"])
@@ -262,6 +272,7 @@ def getAddDeptInfo():
     dept_name = request.form.get("dept_name", "")
     return add, dept_name
 
+
 #値を集約
 def correctAddDeptValue(add, judge, result, dept_info):
     params = {
@@ -271,6 +282,7 @@ def correctAddDeptValue(add, judge, result, dept_info):
         "dept_info" : dept_info
     }
     return params
+
 
 #新規追加URL(部品を集めて実行する)
 @app.route("/dept/add", methods=["POST"])
@@ -298,6 +310,7 @@ def getChangeDeptInfo():
     change_info = request.form.get("change_info", "")
     return dept_name, change_info
 
+
 #値を集約
 def correctEditDeptValue(judge, result, change_info, dept_name):
     params = {
@@ -307,6 +320,7 @@ def correctEditDeptValue(judge, result, change_info, dept_name):
         "dept_name" : dept_name
     }
     return params
+
 
 #編集のURL(部品を集めて実行する)
 @app.route("/dept/edit", methods=["POST"])
@@ -334,6 +348,7 @@ def getDeleteDeptInfo():
     dept_name = request.form.get("dept_name", "")
     return delete_info, dept_name
 
+
 #値を集約
 def correctDeleteDeptValue(dept_info, message):
     params = {
@@ -341,6 +356,7 @@ def correctDeleteDeptValue(dept_info, message):
         "message" : message
     }
     return params
+
 
 #削除のURL(部品を集めて実行する)
 @app.route("/dept/delete", methods=["POST"])
