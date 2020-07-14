@@ -24,6 +24,7 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 #ーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーーー
 
+
 #ホーム画面
 @app.route("/", methods=['GET', 'POST'])
 def employeeList():
@@ -49,7 +50,7 @@ def getEmpInfo():
     emp_image = request.files.get("emp_image", "")
     image_id = ""
     #画像ID作成
-    for i in range(10):
+    for _ in range(10):
         image_id += (random.choice(string.ascii_letters))
     return add, emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, emp_image
 
@@ -164,7 +165,7 @@ def correctSearchEmpValue(search_name, search_emp_id, search_dept, dept_info, em
 @app.route("/emp/search", methods=["POST"])
 def searchEmp():
     search_dept, search_emp_id, search_name = getSearchEmpInfo()
-    cursor, cnx = db.connectDatabase()
+    cursor, _ = db.connectDatabase()
     dept_info = db.deptInfoData(cursor)
     query = db.setSearchQuery(search_dept, search_emp_id, search_name)
     emp_info, emp_count = db.exeSearchEmpQuery(cursor, query)
@@ -176,7 +177,7 @@ def searchEmp():
 #csv出力
 @app.route('/emp/output', methods=["GET", "POST"])
 def outputCsv():
-    cursor, cnx = db.connectDatabase()
+    cursor, _ = db.connectDatabase()
     csv = db.downloads(cursor)
     response = make_response(csv)
     response.headers["Content-Disposition"] = f"attachment; filename=employee_information.csv"
@@ -205,7 +206,6 @@ def correctDeleteEmpValue(emp_info, message):
 def deleteEmp():
     delete_info, emp_name = getDeleteEmpInfo()
     cursor, cnx = db.connectDatabase()
-    dept_info = db.deptInfoData(cursor)
     info_delete, img_delete = db.setDeleteEmpQuery(delete_info)
     emp_info = db.tableDataStorage()
     exist_info = db.comformDeleteEmpInfo(emp_info, delete_info)
@@ -219,7 +219,7 @@ def deleteEmp():
 #ホーム画面
 @app.route("/dept", methods=["GET", "POST"])
 def deptList():
-    cursor, cnx = db.connectDatabase()
+    cursor, _ = db.connectDatabase()
     dept_info = db.deptInfoData(cursor)
     params = {
         "dept_info" : dept_info
@@ -282,7 +282,6 @@ def correctEditDeptValue(judge, result, change_info, dept_name):
 def editDept():
     dept_name, change_info = getChangeDeptInfo()
     cursor, cnx = db.connectDatabase()
-    dept_info = db.deptInfoData(cursor)
     dept_update = db.setEditDeptQuery(change_info, dept_name)
     judge, result = db.exeEditDeptQuery(cursor, cnx, change_info, dept_name, dept_update)
     params = correctEditDeptValue(judge, result, change_info, dept_name)
