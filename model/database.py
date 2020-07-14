@@ -3,8 +3,7 @@ import re
 import mysql.connector
 from mysql.connector import errorcode
 from model.const import DB
-from model.item import EMP, DEPT
-
+from model.item import EMP, DEPT, EMP_ALL
 
 #データベースに接続
 def connectDatabase():
@@ -16,34 +15,26 @@ def connectDatabase():
     cursor = cnx.cursor()
     return cursor, cnx
 
-
 #従業員データを取得し、配列に代入する
 def tableDataStorage():
     cursor, cnx = connectDatabase()
-
     query = "SELECT emp_id, emp_name, dept_name, image_id FROM emp_info_table as eit JOIN dept_table as dt ON eit.dept_id = dt.dept_id ORDER BY emp_id;"
     cursor.execute(query)
-
     emp_info = []
     for (id, name, dept, image_id) in cursor:
         item = EMP(id, name, dept, image_id)
         emp_info.append(item)
-
     return emp_info
-
 
 #部署情報
 def deptInfoData(cursor):
     query = "SELECT dept_id, dept_name FROM dept_table ORDER BY dept_id;"
     cursor.execute(query)
-
     dept_info = []
     for (id, name) in cursor:
         item = DEPT(id, name)
         dept_info.append(item)
-
     return dept_info
-
 
 #新規追加クエリを保管
 def setAddEmpQuery(emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, add_emp_image):
@@ -55,40 +46,31 @@ def setAddEmpQuery(emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address
         info_add = f'INSERT INTO emp_info_table (emp_name, age, sex, image_id, post_code, pref, address, dept_id, join_date, retire_date) \
                     VALUES ("{emp_name}", {emp_age}, "{emp_sex}", "{image_id}", "{emp_postal}", "{emp_pref}", "{emp_address}", {emp_dept}, "{join_date}", "{retire_date}")'
         img_add = f'INSERT INTO emp_img_table (image_id, emp_image) VALUES ("{image_id}", "{add_emp_image}")'
-
     return info_add, img_add
-
 
 #設定のボタンが押された場合
 def exeAddEmpQuery(cursor, cnx,  emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, add_emp_image, emp_image, info_add, img_add):
     judge = ""
     result = ""
-
     if "setting" in request.form.keys():
         #値が入力されておらず空欄のまま
         if emp_name == "" or emp_age == "" or emp_sex == "" or emp_postal == "" or emp_pref == "" or emp_address == "" or emp_image == "" or emp_dept == "" or join_date == "":
-            judge = "＊失敗：全ての項目を入力してください"
-            result = "false"
+            judge, result = "＊失敗：全ての項目を入力してください", "false"
         #年齢が数字以外で入力されている
         elif not emp_age.isdecimal():
-            judge = "＊失敗：年齢は半角数字で入力してください"
-            result = "false"
+            judge, result = "＊失敗：年齢は半角数字で入力してください", "false"
         #郵便番号が数字以外で入力されている
         elif not re.match(r"[0-9]{3}-?[0-9]{4}", emp_postal):
-            judge = "＊失敗：郵便番号は半角数字で入力してください"
-            result = "false"
+            judge, result = "＊失敗：郵便番号は半角数字で入力してください", "false"
         #名前の間に半角で空欄が入ってない
         elif not re.search(r"[ ]", emp_name):
-            judge = "＊失敗：名前と苗字の間に半角で空欄を入力してください"
-            result = "false"
+            judge, result = "＊失敗：名前と苗字の間に半角で空欄を入力してください", "false"
         #条件通りなので新規追加
         else:
             cursor.execute(info_add)
             cursor.execute(img_add)
             cnx.commit()
-            judge = "＊成功：データベースの追加が行われました"
-            result = "success"
-
+            judge, result = "＊成功：データベースの追加が行われました", "success"
     return judge, result
 
 
@@ -106,13 +88,19 @@ def getEditEmpinfo(cursor, change_info):
 
     #社員ID、名前、年齢、性別、都道府県、住所、部署ID、入社日、退社日、画像
     for (id, name, age, sex, image_id, post, pref, address, dept, join, retire, image) in cursor:
-        item = EMP(id, name, age, sex, image_id, post, pref, address, dept, join, retire, image)
+        item = EMP_ALL(id, name, age, sex, image_id, post, pref, address, dept, join, retire, image)
         if str(item["id"]) == change_info:
             edit_info.append(item)
-            dept_select = item["dept"]
-            pref_select = item["pref"]
-
+            dept_select, pref_select = item["dept"], item["pref"]
     return edit_info, dept_select, pref_select
+
+"""
+    dept_info = []
+    for (id, name) in cursor:
+        item = DEPT(id, name)
+        dept_info.append(item)
+    return dept_info
+"""
 
 
 #更新用のクエリを保管
@@ -132,37 +120,30 @@ def setEditEmpQuery(change_info, emp_name, emp_age, emp_sex, emp_postal, emp_pre
 def exeEditQuery(cursor, cnx,  emp_name, emp_age, emp_sex, emp_postal, emp_pref, emp_address, emp_dept, join_date, retire_date, image_id, add_emp_image, emp_image, info_update, img_update):
     judge = ""
     result = ""
-
     if "setting" in request.form.keys():
         #値が入力されておらず空欄のまま
         if emp_name == "" or emp_age == "" or emp_sex == "" or emp_postal == "" or emp_pref == "" or emp_address == "" or emp_dept == "" or join_date == "" or retire_date == "":
-            judge = "＊失敗：データベースの変更ができませんでした"
-            result = "fales"
+            judge, result = "＊失敗：データベースの変更ができませんでした", "fales"
         #年齢が数字以外で入力されている
         elif not emp_age.isdecimal():
-            judge = "＊失敗：年齢は半角数字で入力してください"
-            result = "false"
+            judge, result = "＊失敗：年齢は半角数字で入力してください", "fales"
         #郵便番号が数字以外で入力されている
         elif not re.match(r"[0-9]{3}-?[0-9]{4}", emp_postal):
-            judge = "＊失敗：郵便番号は半角数字で入力してください"
-            result = "false"
+            judge, result = "＊失敗：郵便番号は半角数字で入力してください", "fales"
         #名前の間に半角で空欄が入ってない
         elif not re.search(r"[ ]", emp_name):
-            judge = "＊失敗：名前と苗字の間に半角で空欄を入力してください"
-            result = "false"
+            judge, result = "＊失敗：名前と苗字の間に半角で空欄を入力してください", "fales"
         #条件通りなので情報変更(画像の変更なし)
         elif emp_image == "":
             cursor.execute(info_update)
             cnx.commit()
-            judge = "＊成功：データベースの変更が行われました"
-            result = "success"
+            judge, result = "＊成功：データベースの変更が行われました", "success"
         #条件通りなので情報変更(画像の変更あり)
         else:
             cursor.execute(info_update)
             cursor.execute(img_update)
             cnx.commit()
-            judge = "＊成功：データベースの変更が行われました"
-            result = "success"
+            judge, result = "＊成功：データベースの変更が行われました", "success"
 
     return judge, result
 
@@ -200,7 +181,6 @@ def exeSearchEmpQuery(cursor, query):
 
     return emp_info, emp_count
 
-
 #csv出力
 def downloads(cursor):
     csv = "社員ID, 名前, 年齢, 性別, 郵便番号, 都道府県, 住所, 部署ID, 部署名, 入社日, 退社日, 画像ID, 画像パス\n"
@@ -213,23 +193,7 @@ def downloads(cursor):
 
     return csv
 
-
-#従業員データを取得し、配列に代入する
-"""
-def tableData():
-    cursor, cnx = connectDatabase()
-
-    query = "SELECT emp_id, emp_name, dept_name, image_id FROM emp_info_table as eit JOIN dept_table as dt ON eit.dept_id = dt.dept_id ORDER BY emp_id;"
-    cursor.execute(query)
-
-    emp_info = []
-    for (id, name, dept, image_id) in cursor:
-        item = {"id" : id, "name" : name, "dept" : dept, "image_id": image_id}
-        emp_info.append(item)
-
-    return emp_info
-"""
-
+#確認
 def comformDeleteEmpInfo(emp_info, delete_info):
     exist_info = ""
     for i in emp_info:

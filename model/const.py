@@ -1,3 +1,4 @@
+#データベース接続のための鍵
 DB = {
     "DB_USER_NAME":"root",
     "DB_PASSWORD":"kaA1ybB2ucC3d2c",
